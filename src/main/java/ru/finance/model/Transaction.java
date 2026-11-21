@@ -24,6 +24,13 @@ public class Transaction {
         this.description = description;
     }
 
+    public Transaction(int id, TransactionType type, double amount, String description) {
+        this.id = id;
+        this.type = type;
+        this.amount = amount;
+        this.description = description;
+    }
+
     public int getId() {
         return id;
     }

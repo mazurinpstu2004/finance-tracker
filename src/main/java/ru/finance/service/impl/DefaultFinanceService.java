@@ -29,7 +29,7 @@ public class DefaultFinanceService implements FinanceService {
     @Override
     public void getTransactions() {
         for (Transaction t : transactions) {
-            System.out.println(t.getId() + " | " + t.getDescription() + " | " + t.getAmount() + " | " + t.getDescription());
+            System.out.println(t.getId() + " | " + t.getType() + " | " + t.getAmount() + " | " + t.getDescription());
         }
     }
 
@@ -45,7 +45,7 @@ public class DefaultFinanceService implements FinanceService {
 
             if (t.getId() == id) {
                 isFound = true;
-                System.out.println(t.getId() + " | " + t.getDescription() + " | " + t.getAmount() + " | " + t.getDescription());
+                System.out.println(t.getId() + " | " + t.getType() + " | " + t.getAmount() + " | " + t.getDescription());
             }
         }
 
@@ -79,7 +79,7 @@ public class DefaultFinanceService implements FinanceService {
     public void getIncome() {
         for (Transaction t : transactions) {
             if (t.getType() == TransactionType.INCOME) {
-                System.out.println(t.getId() + " | " + t.getDescription() + " | " + t.getAmount() + " | " + t.getDescription());
+                System.out.println(t.getId() + " | " + t.getType() + " | " + t.getAmount() + " | " + t.getDescription());
             }
         }
     }
@@ -88,7 +88,7 @@ public class DefaultFinanceService implements FinanceService {
     public void getExpense() {
         for (Transaction t : transactions) {
             if (t.getType() == TransactionType.EXPENSE) {
-                System.out.println(t.getId() + " | " + t.getDescription() + " | " + t.getAmount() + " | " + t.getDescription());
+                System.out.println(t.getId() + " | " + t.getType() + " | " + t.getAmount() + " | " + t.getDescription());
             }
         }
     }
