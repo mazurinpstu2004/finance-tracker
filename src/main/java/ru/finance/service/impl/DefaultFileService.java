@@ -41,6 +41,10 @@ public class DefaultFileService implements FileService {
             System.out.println(Arrays.toString(e.getStackTrace()));
         }
 
+        if (lines.isEmpty()) {
+            return null;
+        }
+
         for (String l : lines) {
             String[] params = l.split("\\|");
 
@@ -58,5 +62,42 @@ public class DefaultFileService implements FileService {
         }
 
         return transactions;
+    }
+
+    @Override
+    public void deleteTransactionFromFile(ArrayList<Transaction> transactions) {
+        Path path = Path.of(PATH);
+
+        try {
+            Files.writeString(path, "");
+
+            for (Transaction t : transactions) {
+                Files.writeString(path, t.getId() + "|" + t.getType() + "|" + t.getAmount() + "|" + t.getDescription() + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            }
+        } catch (IOException e) {
+            System.out.println(Arrays.toString(e.getStackTrace()));
+        }
+    }
+
+    public void getLastIdFromFile() {
+        Path path = Path.of(PATH);
+
+        List<String> lines = new ArrayList<>();
+
+        try {
+            lines = Files.readAllLines(path);
+        } catch (IOException e) {
+            System.out.println(Arrays.toString(e.getStackTrace()));
+        }
+
+        if (lines.isEmpty()) {
+            Transaction.transactionCount = 0;
+            return;
+        }
+
+        String lastLine = lines.getLast();
+        String[] params = lastLine.split("\\|");
+
+        Transaction.transactionCount = Integer.parseInt(params[0]);
     }
 }

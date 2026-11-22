@@ -2,6 +2,7 @@ package ru.finance.service.impl;
 
 import ru.finance.model.Transaction;
 import ru.finance.model.TransactionType;
+import ru.finance.service.FileService;
 import ru.finance.service.FinanceService;
 
 import java.util.ArrayList;
@@ -10,24 +11,28 @@ import java.util.NoSuchElementException;
 
 public class DefaultFinanceService implements FinanceService {
 
-    private final ArrayList<Transaction> transactions = new ArrayList<>();
+    private final FileService fileService = new DefaultFileService();
 
     @Override
     public void addIncome(double amount, String description) {
-        Transaction transaction = new Transaction(amount, description);
-        transaction.setType(TransactionType.INCOME);
-        transactions.add(transaction);
+        Transaction transaction = new Transaction(TransactionType.INCOME, amount, description);
+        fileService.saveTransactionToFile(transaction.getId(), transaction.getType(), transaction.getAmount(), transaction.getDescription());
     }
 
     @Override
     public void addExpense(double amount, String description) {
-        Transaction transaction = new Transaction(amount, description);
-        transaction.setType(TransactionType.EXPENSE);
-        transactions.add(transaction);
+        Transaction transaction = new Transaction(TransactionType.EXPENSE, amount, description);
+        fileService.saveTransactionToFile(transaction.getId(), transaction.getType(), transaction.getAmount(), transaction.getDescription());
     }
 
     @Override
     public void getTransactions() {
+        ArrayList<Transaction> transactions = fileService.loadTransactions();
+
+        if (transactions == null) {
+            throw new IllegalStateException("Список операций пуст");
+        }
+
         for (Transaction t : transactions) {
             System.out.println(t.getId() + " | " + t.getType() + " | " + t.getAmount() + " | " + t.getDescription());
         }
@@ -35,6 +40,12 @@ public class DefaultFinanceService implements FinanceService {
 
     @Override
     public void findTransactionById(int id) {
+        ArrayList<Transaction> transactions = fileService.loadTransactions();
+
+        if (transactions == null) {
+            throw new IllegalStateException("Список операций пуст");
+        }
+
         Iterator<Transaction> iterator = transactions.iterator();
 
         boolean isFound = false;
@@ -56,6 +67,12 @@ public class DefaultFinanceService implements FinanceService {
 
     @Override
     public void deleteTransaction(int id) {
+        ArrayList<Transaction> transactions = fileService.loadTransactions();
+
+        if (transactions == null) {
+            throw new IllegalStateException("Список операций пуст");
+        }
+
         Iterator<Transaction> iterator = transactions.iterator();
 
         boolean isFound = false;
@@ -67,6 +84,7 @@ public class DefaultFinanceService implements FinanceService {
             if (t.getId() == id) {
                 isFound = true;
                 iterator.remove();
+                fileService.deleteTransactionFromFile(transactions);
             }
         }
 
@@ -77,6 +95,12 @@ public class DefaultFinanceService implements FinanceService {
 
     @Override
     public void getIncome() {
+        ArrayList<Transaction> transactions = fileService.loadTransactions();
+
+        if (transactions == null) {
+            throw new IllegalStateException("Список операций пуст");
+        }
+
         for (Transaction t : transactions) {
             if (t.getType() == TransactionType.INCOME) {
                 System.out.println(t.getId() + " | " + t.getType() + " | " + t.getAmount() + " | " + t.getDescription());
@@ -86,6 +110,12 @@ public class DefaultFinanceService implements FinanceService {
 
     @Override
     public void getExpense() {
+        ArrayList<Transaction> transactions = fileService.loadTransactions();
+
+        if (transactions == null) {
+            throw new IllegalStateException("Список операций пуст");
+        }
+
         for (Transaction t : transactions) {
             if (t.getType() == TransactionType.EXPENSE) {
                 System.out.println(t.getId() + " | " + t.getType() + " | " + t.getAmount() + " | " + t.getDescription());
@@ -95,6 +125,12 @@ public class DefaultFinanceService implements FinanceService {
 
     @Override
     public void getStatistics() {
+        ArrayList<Transaction> transactions = fileService.loadTransactions();
+
+        if (transactions == null) {
+            throw new IllegalStateException("Список операций пуст");
+        }
+
         double income = 0;
         double expense = 0;
 

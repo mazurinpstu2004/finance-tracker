@@ -10,4 +10,6 @@ public interface FileService {
     void saveTransactionToFile(int id, TransactionType type, double amount, String description);
 
     ArrayList<Transaction> loadTransactions();
+
+    void deleteTransactionFromFile(ArrayList<Transaction> transactions);
 }

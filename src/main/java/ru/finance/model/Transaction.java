@@ -2,29 +2,47 @@ package ru.finance.model;
 
 public class Transaction {
 
-    private int id;
-    private TransactionType type;
+    private final int id;
+    private final TransactionType type;
     private double amount;
     private String description;
 
 
     public static int transactionCount;
 
-    {
-        transactionCount++;
-    }
-
-    public Transaction(double amount, String description) {
-        if (amount < 0) {
+    public Transaction(TransactionType type, double amount, String description) {
+        if (amount <= 0) {
             throw new IllegalArgumentException("Сумма должна быть положительной");
         }
 
-        this.id = transactionCount;
+        if (type == null) {
+            throw new IllegalArgumentException("Тип операции не должен быть null");
+        }
+
+        if (description == null || description.isBlank()) {
+            throw new IllegalArgumentException("Описание операции не должно быть пустым");
+        }
+
+
+        this.id = ++transactionCount;
+        this.type = type;
         this.amount = amount;
         this.description = description;
     }
 
     public Transaction(int id, TransactionType type, double amount, String description) {
+        if (amount <= 0) {
+            throw new IllegalArgumentException("Сумма должна быть положительной");
+        }
+
+        if (type == null) {
+            throw new IllegalArgumentException("Тип операции не должен быть null");
+        }
+
+        if (description == null || description.isBlank()) {
+            throw new IllegalArgumentException("Описание операции не должно быть пустым");
+        }
+
         this.id = id;
         this.type = type;
         this.amount = amount;
@@ -45,9 +63,5 @@ public class Transaction {
 
     public String getDescription() {
         return description;
-    }
-
-    public void setType(TransactionType type) {
-        this.type = type;
     }
 }
