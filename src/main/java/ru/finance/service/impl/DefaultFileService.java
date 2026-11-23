@@ -4,6 +4,7 @@ import ru.finance.model.Transaction;
 import ru.finance.model.TransactionType;
 import ru.finance.service.FileService;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,16 +15,17 @@ import java.util.List;
 
 public class DefaultFileService implements FileService {
 
-    private final String PATH = "data/transactions.txt";
+    private static final String PATH = "data/transactions.txt";
 
     @Override
     public void saveTransactionToFile(int id, TransactionType type, double amount, String description) {
         Path path = Path.of(PATH);
 
         try {
+            Files.createDirectories(path.getParent());
             Files.writeString(path, id + "|" + type + "|" + amount + "|" + description + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (IOException e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
+            System.out.println(e.getMessage());
         }
     }
 
@@ -33,24 +35,28 @@ public class DefaultFileService implements FileService {
 
         ArrayList<Transaction> transactions = new ArrayList<>();
 
+        if (Files.notExists(path)) {
+            return transactions;
+        }
+
         List<String> lines = new ArrayList<>();
 
         try {
             lines = Files.readAllLines(path);
         } catch (IOException e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
-        }
-
-        if (lines.isEmpty()) {
-            return null;
+            System.out.println(e.getMessage());
         }
 
         for (String l : lines) {
             String[] params = l.split("\\|");
 
+            if (params.length != 4) {
+                throw new IllegalStateException("Размер параметров строки " + l + "не соответствует заявленной длине");
+            }
+
             int id = Integer.parseInt(params[0]);
 
-            TransactionType type = params[1].equals("INCOME") ? TransactionType.INCOME : TransactionType.EXPENSE;
+            TransactionType type = TransactionType.valueOf(params[1]);
 
             double amount = Double.parseDouble(params[2]);
 
@@ -69,13 +75,16 @@ public class DefaultFileService implements FileService {
         Path path = Path.of(PATH);
 
         try {
-            Files.writeString(path, "");
+            Files.createDirectories(path.getParent());
+            StringBuilder sb = new StringBuilder();
 
             for (Transaction t : transactions) {
-                Files.writeString(path, t.getId() + "|" + t.getType() + "|" + t.getAmount() + "|" + t.getDescription() + "\n", StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                sb.append(t.getId() + "|" + t.getType() + "|" + t.getAmount() + "|" + t.getDescription() + "\n");
             }
+
+            Files.writeString(path, sb.toString(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
+            System.out.println(e.getMessage());
         }
     }
 

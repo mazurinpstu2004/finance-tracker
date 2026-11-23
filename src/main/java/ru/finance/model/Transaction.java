@@ -4,8 +4,8 @@ public class Transaction {
 
     private final int id;
     private final TransactionType type;
-    private double amount;
-    private String description;
+    private final double amount;
+    private final String description;
 
 
     public static int transactionCount;
@@ -31,6 +31,10 @@ public class Transaction {
     }
 
     public Transaction(int id, TransactionType type, double amount, String description) {
+        if (id <= 0) {
+            throw new IllegalArgumentException("ID должен быть положительным");
+        }
+
         if (amount <= 0) {
             throw new IllegalArgumentException("Сумма должна быть положительной");
         }

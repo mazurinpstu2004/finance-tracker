@@ -22,7 +22,7 @@ public class Application {
         financeService.addIncome(15000, "Зарплата");
         financeService.addExpense(10000, "Электроника");
 
-        financeService.getTransactions();
+        financeService.getStatistics();
 
 
 
